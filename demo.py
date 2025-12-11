@@ -1,5 +1,5 @@
-import cudf.pandas
 cudf.pandas.install()
+import cudf.pandas
 import pandas as pd
 import streamlit as st
 import numpy as np 
