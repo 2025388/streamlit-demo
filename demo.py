@@ -10,7 +10,7 @@ date_column = 'date/time'
 def load_data(nrows):
     data = pd.read_csv(DATA_URL, nrows= nrows)
     lowercase = lambda x: str(x).lower()
-    data.rename(lowerrcase, axis='columns', inplace= True)
+    data.rename(lowercase, axis='columns', inplace= True)
     data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
     
 data_load_state = st.text('Data loading...')
