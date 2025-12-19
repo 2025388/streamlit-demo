@@ -327,8 +327,7 @@ snp_pct    = (snp_2025    - snp_2024)    / snp_2024
 
 market_df = pd.DataFrame({"Asset": ["Brent Oil", "Natural Gas", "S&P Index"], "Price (Today)": [crude_2025, natgas_2025, snp_2025], "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]})
 
-styled_df = (
-    market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct})
+styled_df = (market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct}))
 
 UP = "\u25B2"     
 DOWN = "\u25BC"   
