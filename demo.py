@@ -74,19 +74,19 @@ def forecast_models(df_model, target_col='Total final consumption (PJ)', split_y
             'Future Prediction': [np.nan]*(len(y_train_pred)+len(y_test_pred)) + list(y_future_pred)})
         predictions_dict[name] = df_pred
         if plot:
-            plt.figure(figsize=(10,4))
-            plt.plot(df_pred['Year'], df_pred['Train Prediction'], marker='o', label='Train Prediction')
-            plt.plot(df_pred['Year'], df_pred['Test Prediction'], marker='o', label='Test Prediction')
+            fig, ax = plt.subplots(figsize=(10, 4))
+            ax.plot(df_pred['Year'], df_pred['Train Prediction'], marker='o', label='Train Prediction')
+            ax.plot(df_pred['Year'], df_pred['Test Prediction'], marker='o', label='Test Prediction')
             if len(y_future_pred) > 0:
-                plt.plot(df_pred['Year'], df_pred['Future Prediction'], marker='o', label='Future Prediction')
-            plt.plot(df_model['Year'], y, linestyle='--', color='k', alpha=0.6, label='Actual')
-            plt.title(f'{name} Predictions vs Actual')
-            plt.xlabel('Year')
-            plt.ylabel(target_col)
-            plt.grid(True)
-            plt.legend()
-            plt.tight_layout()
-            plt.show()
+                ax.plot(df_pred['Year'], df_pred['Future Prediction'], marker='o', label='Future Prediction')
+            ax.plot(df_model['Year'], y, linestyle='--', color='k', alpha=0.6, label='Actual')
+            ax.set_title(f'{name} Predictions vs Actual')
+            ax.set_xlabel('Year')
+            ax.set_ylabel(target_col)
+            ax.grid(True)
+            ax.legend()
+            fig.tight_layout()
+            st.pyplot(fig)
     return predictions_dict, trained_models
 
 def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024=None, crude_2025=None, oil_2024=None, oil_2025=None, natgas_2024=None, 
