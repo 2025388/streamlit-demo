@@ -339,9 +339,13 @@ styled_df = (
         "% Change (vs 2024)": format_pct
     })
 
+UP = "\u25B2"     
+DOWN = "\u25BC"   
+FLAT = "\u25A0"   
+
 
 def format_pct(x):
-    arrow = "▲" if x > 0 else "▼" if x < 0 else "■"
+    arrow = up if x > 0 else down if x < 0 else flat
     return f"{arrow} {x*100:.2f}%"
 
     .applymap(
