@@ -325,19 +325,10 @@ crude_pct  = (crude_2025  - crude_2024)  / crude_2024
 natgas_pct = (natgas_2025 - natgas_2024) / natgas_2024
 snp_pct    = (snp_2025    - snp_2024)    / snp_2024
 
-market_df = pd.DataFrame({
-    "Asset": ["Brent Oil", "Natural Gas", "S&P Index"],
-    "Price (Today)": [crude_2025, natgas_2025, snp_2025],
-    "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]
-})
+market_df = pd.DataFrame({"Asset": ["Brent Oil", "Natural Gas", "S&P Index"], "Price (Today)": [crude_2025, natgas_2025, snp_2025], "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]})
 
 styled_df = (
-    market_df
-    .style
-    .format({
-        "Price (Today)": "{:.2f}",
-        "% Change (vs 2024)": format_pct
-    })
+    market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct})
 
 UP = "\u25B2"     
 DOWN = "\u25BC"   
@@ -347,14 +338,7 @@ FLAT = "\u25A0"
 def format_pct(x):
     arrow = up if x > 0 else down if x < 0 else flat
     return f"{arrow} {x*100:.2f}%"
-
-    .applymap(
-        lambda x: "color: green;" if isinstance(x, str) and "▲" in x
-        else "color: red;" if isinstance(x, str) and "▼" in x
-        else "",
-        subset=["% Change (vs 2024)"]
-    )
-)
+    styled_df = (market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct}).applymap(lambda x: "color: green;" if isinstance(x, str) and up in x else "color: red;" if isinstance(x, str) and down in x else "", subset=["% Change (vs 2024)"]))
 
 
 st.subheader("📊 Market Snapshot")
