@@ -7,5 +7,5 @@ SALib
 yfinance
 datetime
 keras
-networkx
+networkx>=3.1
 pylab
