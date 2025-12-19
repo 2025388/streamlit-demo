@@ -147,14 +147,13 @@ def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024
     Si = sobol.analyze(problem, Y, calc_second_order=False, print_to_console=True) 
     return Si
 
-def si_to_dataframe(Si_dict):
-    df = pd.DataFrame({
-        'S1': Si_dict.get('S1', np.zeros(len(feature_names))),
-        'S1_conf': Si_dict.get('S1_conf', np.zeros(len(feature_names))),
-        'ST': Si_dict.get('ST', np.zeros(len(feature_names))),
-        'ST_conf': Si_dict.get('ST_conf', np.zeros(len(feature_names)))
+def si_to_dataframe(Si_dict, feature_names):
+    return pd.DataFrame({
+        'S1': Si_dict['S1'],
+        'S1_conf': Si_dict['S1_conf'],
+        'ST': Si_dict['ST'],
+        'ST_conf': Si_dict['ST_conf'],
     }, index=feature_names)
-    return df
 
 def interpret_sensitivity_df(Si_df, threshold_high=0.7, threshold_medium=0.3):
     table = []
@@ -217,6 +216,7 @@ country = st.selectbox('Select a country', list(url_dict.keys()))
 DATA_URL = url_dict[country]
 df = pd.read_csv(DATA_URL)
 gdp_2024 = gdp_dict[country]
+st.caption(f"Updated at {timestamp} - Refresh app to get lastest quotes")
 if country == 'Ireland':
     predictions, trained_models = forecast_models(df, models_to_run='Random Forest', future_years=list(range(2024,2031)))
     model = trained_models['Random Forest']
