@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import numpy as np 
 import yfinance as yf
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from datetime import datetime, timezone
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import TimeSeriesSplit
