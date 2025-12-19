@@ -198,6 +198,8 @@ snp_2025    = get_last_price('ES=F', 6838.75)
 crude_pct  = (crude_2025  - crude_2024)  / crude_2024
 natgas_pct = (natgas_2025 - natgas_2024) / natgas_2024
 snp_pct    = (snp_2025    - snp_2024)    / snp_2024
+gdp_dict = {'Ireland': 577389000000.00, 'Austria': 521640000000.00, 'Belgium': 644783000000.00, 'Norway': 517102000000.00, 'Poland': 1030000000000.00,    
+            'Sweden': 584960000000.00}
 
 
 market_df = pd.DataFrame({'Asset': ['Brent Oil', 'Natural Gas', 'S&P Index'], 'Price (Today)': [crude_2025, natgas_2025, snp_2025], '% Change (vs 2024)': [crude_pct, natgas_pct, snp_pct]})
@@ -212,7 +214,7 @@ country = st.selectbox('Select a country', list(url_dict.keys()))
 
 DATA_URL = url_dict[country]
 df = pd.read_csv(DATA_URL)
-
+gdp_2024 = gdp_dict[country]
 if country == 'Ireland':
     predictions, trained_models = forecast_models(df, models_to_run='Random Forest', future_years=list(range(2024,2031)))
     model = trained_models['Random Forest']
