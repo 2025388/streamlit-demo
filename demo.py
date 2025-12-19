@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import numpy as np 
 import yfinance as yf
+from datetime import datetime, timezone
 
 st.title('Energy Market Forecast')
 def forecast_models(df_model, target_col='Total final consumption (PJ)', split_year=2015, models_to_run=None, plot=True, future_years=None): 
@@ -329,8 +330,9 @@ snp_pct    = (snp_2025    - snp_2024)    / snp_2024
 market_df = pd.DataFrame({'Asset': ['Brent Oil', 'Natural Gas', 'S&P Index'], 'Price (Today)': [crude_2025, natgas_2025, snp_2025], '% Change (vs 2024)': [crude_pct, natgas_pct, snp_pct]})
 
 
-
+timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 st.subheader('Market Snapshot')
+st.caption(f"Updated at {timestamp}")
 st.dataframe(market_df, use_container_width=True, hide_index=True)
 
 
