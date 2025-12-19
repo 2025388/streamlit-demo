@@ -192,6 +192,8 @@ url_dict = {
 crude_2024  = 74.64
 natgas_2024 = 3.633
 snp_2024    = 5935.7
+oil_2024 = 268.45
+coal_2024 = 184.20
 crude_2025  = get_last_price('BZ=F', 60.06)
 natgas_2025 = get_last_price('NG=F', 3.91)
 snp_2025    = get_last_price('ES=F', 6838.75)
