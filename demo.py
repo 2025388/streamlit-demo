@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import numpy as np 
+import yfinancea as yf
 
 st.title('Energy Market Forecast')
 def forecast_models(df_model, target_col='Total final consumption (PJ)', split_year=2015, models_to_run=None, plot=True, future_years=None): 
@@ -298,6 +299,32 @@ class QLearningWrapper:
         # Scale prediction proportionally
         return np.array([base_pred * (gdp_sample / gdp_base)])
 
+def get_last_price(ticker, fallback):
+    t = yf.Ticker(ticker)
+    hist = t.history(period="5d")
+    if not hist.empty:
+        return float(hist['Close'].iloc[-1])
+    return fallback
+
+def format_pct(x):
+    arrow = "▲" if x > 0 else "▼" if x < 0 else "■"
+    return f"{arrow} {x*100:.2f}%"
+
+styled_df = (
+    market_df
+    .style
+    .format({
+        "Price (Today)": "{:.2f}",
+        "% Change (vs 2024)": format_pct
+    })
+    .applymap(
+        lambda x: "color: green;" if isinstance(x, str) and "▲" in x
+        else "color: red;" if isinstance(x, str) and "▼" in x
+        else "",
+        subset=["% Change (vs 2024)"]
+    )
+)
+
 
 url_dict = {
     'Ireland': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmkEyStd7YrwpIqUnswch2g_1bU7H0OpQb_Q0JlKAPsfmI0UdGYXIfNMDkIwjq1xH9MvOAhwvRy4h/pub?output=csv',
@@ -306,7 +333,26 @@ url_dict = {
     'Norway': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSXwT5yUdmIiGmKwSp33Ks-ohIBGmcFe2A6qC60qr9xR6jwxpvpJ-cwihYDK-CNb97S6HDnyKxrt-bJ/pub?output=csv',
     'Poland': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYl0Bb4gWasfG3WcTrNyKbjdd8Eb-n199Akj15Vx5PNPfHrublOH96CFkhTfJxZKzc-7QUUjJxWHpA/pub?output=csv'}
 
-st.text('Select a country')
+crude_2024  = 74.64
+natgas_2024 = 3.633
+snp_2024    = 5935.7
+crude_2025  = get_last_price("BZ=F", 60.06)
+natgas_2025 = get_last_price("NG=F", 3.91)
+snp_2025    = get_last_price("ES=F", 6838.75)
+crude_pct  = (crude_2025  - crude_2024)  / crude_2024
+natgas_pct = (natgas_2025 - natgas_2024) / natgas_2024
+snp_pct    = (snp_2025    - snp_2024)    / snp_2024
+
+market_df = pd.DataFrame({
+    "Asset": ["Brent Oil", "Natural Gas", "S&P Index"],
+    "Price (Today)": [crude_2025, natgas_2025, snp_2025],
+    "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]
+})
+
+st.subheader("📊 Market Snapshot")
+st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
+
 country = st.selectbox(
     "Select a country",
     list(url_dict.keys()))
