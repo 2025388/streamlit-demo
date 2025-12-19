@@ -6,6 +6,4 @@ scikit-learn
 SALib
 yfinance
 datetime
-keras
-networkx>=3.1
-pylab
+

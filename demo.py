@@ -18,7 +18,6 @@ from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn import preprocessing
-import networkx as nx
 import pylab as pl
 from SALib.sample import saltelli
 from SALib.analyze import sobol
@@ -148,133 +147,6 @@ def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024
     Si = sobol.analyze(problem, Y, calc_second_order=False, print_to_console=True) 
     return Si
 
-def q_learning_df(df, target_col, split_year, gamma=0.75, episodes=1000, plot_scores=True):
-    np.random.seed(42)
-    df = df.sort_values('Year').reset_index(drop=True)
-    years = df['Year'].to_numpy()
-    n_states = len(years)
-    mask = df['Year'] < split_year
-    train_idx = np.where(mask)[0]
-    test_idx  = np.where(~mask)[0]
-    M = np.ones((n_states, n_states)) * -1
-    target = df[target_col].to_numpy()
-    for i in range(n_states):
-        for j in range(n_states):
-            if i != j:
-                reward = target[j] - target[i]
-                M[i, j] = reward if reward > 0 else 0
-    goal = train_idx[-1]
-    M[goal, goal] = 100
-    Q = np.zeros((n_states, n_states))
-    def available_actions(state):
-        return np.where(M[state,] >= 0)[0]
-    def sample_next_action(actions):
-        return int(np.random.choice(actions, 1))
-    def update(current_state, action):
-        max_indices = np.where(Q[action,] == np.max(Q[action,]))[0]
-        max_index = max_indices[0]  # pick first
-        Q[current_state, action] = M[current_state, action] + gamma * Q[action, max_index]
-        return np.sum(Q / np.max(Q) * 100) if np.max(Q) > 0 else 0
-    scores = []
-    for _ in range(episodes):
-        current_state = np.random.randint(0, goal + 1)
-        actions = available_actions(current_state)
-        action = sample_next_action(actions)
-        score = update(current_state, action)
-        scores.append(score)
-    current_state = 0
-    steps = [current_state]
-    visited = set(steps)  # prevent loops
-    while current_state != goal:
-        next_steps = np.where(Q[current_state,] == np.max(Q[current_state,]))[0]
-        next_steps = [s for s in next_steps if s not in visited]
-        if not next_steps:  
-            print('No valid path to goal found!')
-            break
-        next_step = int(np.random.choice(next_steps, 1))
-        steps.append(next_step)
-        visited.add(next_step)
-        current_state = next_step
-    total_reward = sum(M[steps[i], steps[i + 1]] for i in range(len(steps) - 1))
-    results_df = pd.DataFrame({'Model': ['Q-Learning'], 'Total Reward': [total_reward], 'Steps to Goal': [len(steps) - 1]})
-    if plot_scores:
-        import matplotlib.pyplot as plt
-        plt.plot(scores)
-        plt.xlabel('Iteration')
-        plt.ylabel('Reward gained')
-        plt.title('Q-Learning Training Progress')
-        plt.show()
-    y_actual = target[steps]
-    y_pred = []
-    for i in range(len(steps)-1):
-        y_pred.append(Q[steps[i], steps[i+1]])
-    y_pred = np.array(y_pred)
-    y_actual = target[steps[1:]]
-    mae  = mean_absolute_error(y_actual, y_pred)
-    mse  = mean_squared_error(y_actual, y_pred)
-    rmse = np.sqrt(mse)
-    mape = np.mean(np.abs((y_actual - y_pred) / np.where(y_actual == 0, 1, y_actual))) * 100
-    r2   = r2_score(y_actual, y_pred)
-    errors_df = pd.DataFrame({'MAE': [mae], 'MSE': [mse], 'RMSE': [rmse], 'MAPE': [mape], 'R2': [r2]})
-    return results_df, steps, Q, errors_df
-
-def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024=None, crude_2025=None, oil_2024=None, oil_2025=None, 
-                             natgas_2024=None, natgas_2025=None, snp_2024=None, snp_2025=None, n_samples=1000):
-    features = df_model.drop(columns=['Year', 'Country', 'Total final consumption (PJ)'], errors='ignore').columns.tolist()
-    problem_features = []
-    bounds = []
-    base_values = []
-    if 'GDP' in features:
-        gdp_value = gdp_2024.get(country, np.nan)
-        if np.isnan(gdp_value):
-            raise ValueError(f'GDP for {country} not found in gdp_dict')
-        problem_features.append('GDP')
-        bounds.append([0.9*gdp_value, 1.1*gdp_value])
-        base_values.append(gdp_value)    
-    if 'G_crude' in features:
-        problem_features.append('G_crude')
-        lower = min(0.9*crude_2024, 1.1*crude_2025)
-        upper = max(0.9*crude_2024, 1.1*crude_2025)
-        bounds.append([lower, upper])
-        base_values.append(crude_2024)    
-    if 'G_oil_products' in features and oil_2024 is not None:
-        problem_features.append('G_oil_products')
-        lower = min(0.9*oil_2024, 1.1*oil_2025)
-        upper = max(0.9*oil_2024, 1.1*oil_2025)
-        bounds.append([lower, upper])
-        base_values.append(oil_2024)     
-    if 'G_natgas' in features and natgas_2024 is not None:
-        problem_features.append('G_natgas')
-        lower = min(0.9*natgas_2024, 1.1*natgas_2025)
-        upper = max(0.9*natgas_2024, 1.1*natgas_2025)
-        bounds.append([lower, upper])
-        base_values.append(natgas_2024)      
-    if 'G_S&P' in features and snp_2024 is not None:
-        problem_features.append('G_S&P')
-        lower = min(0.9*snp_2024, 1.1*snp_2025)
-        upper = max(0.9*snp_2024, 1.1*snp_2025)
-        bounds.append([lower, upper])
-        base_values.append(snp_2024)
-    if len(problem_features) == 0:
-        raise ValueError('No matching features found for sensitivity analysis') 
-    problem = {'num_vars': len(problem_features), 'names': problem_features, 'bounds': bounds}
-    param_values = saltelli.sample(problem, n_samples, calc_second_order=False)
-    Y = []
-    X_features = getattr(model, 'features', features)
-    for row in param_values:
-        x = base_values.copy()
-        for i, val in enumerate(row):
-            x[i] = val
-        x_dict = dict(zip(problem_features, x))
-        full_input = df_model[X_features].iloc[-1].copy()
-        for k, v in x_dict.items():
-            if k in full_input.index:  
-                full_input[k] = v
-        y_pred = model.predict(full_input.values.reshape(1, -1))
-        Y.append(y_pred[0])
-    Y = np.array(Y)
-    Si = sobol.analyze(problem, Y, calc_second_order=False, print_to_console=True) 
-    return Si
 
 def si_to_dataframe(Si_dict):
     df = pd.DataFrame({
@@ -302,35 +174,11 @@ def interpret_sensitivity_df(Si_df, threshold_high=0.7, threshold_medium=0.3):
         table.append({'Feature': feature, 'S1': s1_val, 'Interpretation': interpretation})
     return pd.DataFrame(table)
 
-class QLearningWrapper:
-    def __init__(self, Q_table, df_model, target_col='Total final consumption (PJ)'):
-        self.Q = Q_table
-        self.df_model = df_model.sort_values('Year').reset_index(drop=True)
-        self.target_col = target_col
-        self.features = df_model.drop(columns=['Year', 'Country', target_col], errors='ignore').columns.tolist()
-    def predict(self, X):
-        last_idx = self.df_model.index[-1]
-        q_row = self.Q[last_idx]
-        next_state = np.argmax(q_row)
-        base_pred = self.df_model[self.target_col].iloc[next_state]
-        # Assume X[:, 0] is GDP
-        gdp_sample = X[0, 0]
-        gdp_base = self.df_model['GDP'].iloc[-1]
-        # Scale prediction proportionally
-        return np.array([base_pred * (gdp_sample / gdp_base)])
-
-def get_last_price(ticker, fallback):
-    t = yf.Ticker(ticker)
-    hist = t.history(period='5d')
-    if not hist.empty:
-        return float(hist['Close'].iloc[-1])
-    return fallback
 
 
 
 url_dict = {
     'Ireland': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmkEyStd7YrwpIqUnswch2g_1bU7H0OpQb_Q0JlKAPsfmI0UdGYXIfNMDkIwjq1xH9MvOAhwvRy4h/pub?output=csv',
-    'Austria': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTELJCTQ4fZ3V2hKw2dfydXm9h5_8sa0imRA1Pah5wumpKhwWxi1yx7nLQEJJaM8j23oH9MthIenj_5/pub?output=csv',
     'Belgium': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRlhSegddg8JHn48gZbKv7BBrusSHfE9bKv7VayHpt9x4_E3g16iuRonWGXskymjZDsedcjmeKBMhfJ/pub?output=csv',
     'Norway': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSXwT5yUdmIiGmKwSp33Ks-ohIBGmcFe2A6qC60qr9xR6jwxpvpJ-cwihYDK-CNb97S6HDnyKxrt-bJ/pub?output=csv',
     'Poland': 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYl0Bb4gWasfG3WcTrNyKbjdd8Eb-n199Akj15Vx5PNPfHrublOH96CFkhTfJxZKzc-7QUUjJxWHpA/pub?output=csv'}
