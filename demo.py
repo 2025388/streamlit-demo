@@ -222,6 +222,25 @@ if country == 'Ireland':
     st.caption(f"Loading sensibility analysis might take up to 4 minutes")
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Ireland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
+    features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
+    table_rows = []
+    for feature in features_list:
+        if feature in Si['S1'] and Si['S1'][features_list.index(feature)] > 0:
+            s1_val = Si['S1'][features_list.index(feature)]
+            if s1_val >= 0.7:
+                interpretation = f"Highly sensitive. Monitor {feature} as it strongly affects energy consumption."
+            elif s1_val >= 0.3:
+                interpretation = f"Moderately sensitive. {feature} movements may influence consumption trends."
+            else:
+                interpretation = f"Slight sensitivity; minor effect on energy consumption."
+        else:
+            s1_val = 0
+            interpretation = "No impact on prices."
+        table_rows.append({'Feature': feature, 'S1': s1_val, 'Interpretation': interpretation})
+    sensitivity_df = pd.DataFrame(table_rows)
+    st.subheader(f"Sensitivity Analysis for {country}")
+    st.dataframe(sensitivity_df, use_container_width=True)
+
 elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
