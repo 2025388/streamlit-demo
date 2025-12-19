@@ -96,7 +96,7 @@ def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024
     bounds = []
     base_values = []
     if 'GDP' in features:
-        gdp_value = gdp_2024.get(country, np.nan)
+        gdp_value = gdp_2024
         if np.isnan(gdp_value):
             raise ValueError(f'GDP for {country} not found in gdp_dict')
         problem_features.append('GDP')
