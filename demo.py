@@ -18,7 +18,6 @@ from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn import preprocessing
-import pylab as pl
 from SALib.sample import saltelli
 from SALib.analyze import sobol
 
@@ -147,7 +146,6 @@ def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024
     Si = sobol.analyze(problem, Y, calc_second_order=False, print_to_console=True) 
     return Si
 
-
 def si_to_dataframe(Si_dict):
     df = pd.DataFrame({
         'S1': Si_dict.get('S1', np.zeros(len(feature_names))),
@@ -174,6 +172,13 @@ def interpret_sensitivity_df(Si_df, threshold_high=0.7, threshold_medium=0.3):
         table.append({'Feature': feature, 'S1': s1_val, 'Interpretation': interpretation})
     return pd.DataFrame(table)
 
+
+def get_last_price(ticker, fallback):
+    t = yf.Ticker(ticker)
+    hist = t.history(period='5d')
+    if not hist.empty:
+        return float(hist['Close'].iloc[-1])
+    return fallback
 
 
 
