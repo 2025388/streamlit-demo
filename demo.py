@@ -18,9 +18,6 @@ from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn import preprocessing
-from keras import models
-from keras import layers
-from keras.models import Sequential
 import networkx as nx
 import pylab as pl
 from SALib.sample import saltelli
