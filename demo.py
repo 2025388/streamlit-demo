@@ -216,25 +216,28 @@ country = st.selectbox('Select a country', list(url_dict.keys()))
 DATA_URL = url_dict[country]
 df = pd.read_csv(DATA_URL)
 gdp_2024 = gdp_dict[country]
-st.caption(f"Loading grraphics and Sensibility analysis might take up to 4 minutes")
 if country == 'Ireland':
     predictions, trained_models = forecast_models(df, models_to_run='Random Forest', future_years=list(range(2024,2031)))
     model = trained_models['Random Forest']
+    st.caption(f"Loading sensibility analysis might take up to 4 minutes")
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Ireland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
 elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
+    st.caption(f"Loading sensibility analysis might take up to 4 minutes")
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Belgium', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024, oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
 elif country == 'Norway':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
+    st.caption(f"Loading sensibility analysis might take up to 4 minutes")
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Norway', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                               oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
 
 else:
     predictions, trained_models = forecast_models(df, models_to_run='Lasso', future_years=list(range(2024,2031)))
     model = trained_models['Lasso']
+    st.caption(f"Loading sensibility analysis might take up to 4 minutes")
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Poland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
 
