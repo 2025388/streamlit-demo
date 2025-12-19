@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import numpy as np 
-import yfinancea as yf
+import yfinance as yf
 
 st.title('Energy Market Forecast')
 def forecast_models(df_model, target_col='Total final consumption (PJ)', split_year=2015, models_to_run=None, plot=True, future_years=None): 
