@@ -7,3 +7,5 @@ SALib
 yfinance
 datetime
 keras
+network
+pylab
