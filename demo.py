@@ -169,7 +169,7 @@ def q_learning_df(df, target_col, split_year, gamma=0.75, episodes=1000, plot_sc
         next_steps = np.where(Q[current_state,] == np.max(Q[current_state,]))[0]
         next_steps = [s for s in next_steps if s not in visited]
         if not next_steps:  
-            print("No valid path to goal found!")
+            print('No valid path to goal found!')
             break
         next_step = int(np.random.choice(next_steps, 1))
         steps.append(next_step)
@@ -269,16 +269,16 @@ def interpret_sensitivity_df(Si_df, threshold_high=0.7, threshold_medium=0.3):
     table = []
     for feature in ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']:
         if feature not in Si_df.index or Si_df.loc[feature, 'S1'] == 0:
-            interpretation = "No impact on prices."
+            interpretation = 'No impact on prices.'
             s1_val = 0.0
         else:
             s1_val = Si_df.loc[feature, 'S1']
             if s1_val >= threshold_high:
-                interpretation = f"Highly sensitive. Monitor {feature} as it strongly affects energy consumption."
+                interpretation = f'Highly sensitive. Monitor {feature} as it strongly affects energy consumption.'
             elif s1_val >= threshold_medium:
-                interpretation = f"Moderately sensitive. {feature} movements may influence consumption trends."
+                interpretation = f'Moderately sensitive. {feature} movements may influence consumption trends.'
             else:
-                interpretation = f"Slight sensitivity; minor effect on energy consumption."
+                interpretation = f'Slight sensitivity; minor effect on energy consumption.'
         table.append({'Feature': feature, 'S1': s1_val, 'Interpretation': interpretation})
     return pd.DataFrame(table)
 
@@ -301,7 +301,7 @@ class QLearningWrapper:
 
 def get_last_price(ticker, fallback):
     t = yf.Ticker(ticker)
-    hist = t.history(period="5d")
+    hist = t.history(period='5d')
     if not hist.empty:
         return float(hist['Close'].iloc[-1])
     return fallback
@@ -318,36 +318,24 @@ url_dict = {
 crude_2024  = 74.64
 natgas_2024 = 3.633
 snp_2024    = 5935.7
-crude_2025  = get_last_price("BZ=F", 60.06)
-natgas_2025 = get_last_price("NG=F", 3.91)
-snp_2025    = get_last_price("ES=F", 6838.75)
+crude_2025  = get_last_price('BZ=F', 60.06)
+natgas_2025 = get_last_price('NG=F', 3.91)
+snp_2025    = get_last_price('ES=F', 6838.75)
 crude_pct  = (crude_2025  - crude_2024)  / crude_2024
 natgas_pct = (natgas_2025 - natgas_2024) / natgas_2024
 snp_pct    = (snp_2025    - snp_2024)    / snp_2024
 
 
-UP = (\u25B2)    
-DOWN = (\u25BC)   
-FLAT = (\u25A0)  
+market_df = pd.DataFrame({'Asset': ['Brent Oil', 'Natural Gas', 'S&P Index'], 'Price (Today)': [crude_2025, natgas_2025, snp_2025], '% Change (vs 2024)': [crude_pct, natgas_pct, snp_pct]})
 
 
-def format_pct(x):
-    arrow = up if x > 0 else down if x < 0 else flat
-    return f"{arrow} {x*100:.2f}%"
-    styled_df = (market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct}).applymap(lambda x: "color: green;" if isinstance(x, str) and up in x else "color: red;" if isinstance(x, str) and down in x else "", subset=["% Change (vs 2024)"]))
 
-
-market_df = pd.DataFrame({"Asset": ["Brent Oil", "Natural Gas", "S&P Index"], "Price (Today)": [crude_2025, natgas_2025, snp_2025], "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]})
-
-styled_df = (market_df.style.format({"Price (Today)": "{:.2f}", "% Change (vs 2024)": format_pct}))
-
-
-st.subheader("📊 Market Snapshot")
-st.dataframe(styled_df, use_container_width=True, hide_index=True)
+st.subheader('Market Snapshot')
+st.dataframe(market_df, use_container_width=True, hide_index=True)
 
 
 country = st.selectbox(
-    "Select a country",
+    'Select a country',
     list(url_dict.keys()))
 
 DATA_URL = url_dict[country]
