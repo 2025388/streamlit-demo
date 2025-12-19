@@ -3,6 +3,28 @@ import streamlit as st
 import numpy as np 
 import yfinance as yf
 from datetime import datetime, timezone
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR 
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn import preprocessing
+from keras import models
+from keras import layers
+from keras.models import Sequential
+import networkx as nx
+import pylab as pl
+from SALib.sample import saltelli
+from SALib.analyze import sobol
 
 st.title('Energy Market Forecast')
 def forecast_models(df_model, target_col='Total final consumption (PJ)', split_year=2015, models_to_run=None, plot=True, future_years=None): 
