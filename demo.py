@@ -306,24 +306,6 @@ def get_last_price(ticker, fallback):
         return float(hist['Close'].iloc[-1])
     return fallback
 
-def format_pct(x):
-    arrow = "▲" if x > 0 else "▼" if x < 0 else "■"
-    return f"{arrow} {x*100:.2f}%"
-
-styled_df = (
-    market_df
-    .style
-    .format({
-        "Price (Today)": "{:.2f}",
-        "% Change (vs 2024)": format_pct
-    })
-    .applymap(
-        lambda x: "color: green;" if isinstance(x, str) and "▲" in x
-        else "color: red;" if isinstance(x, str) and "▼" in x
-        else "",
-        subset=["% Change (vs 2024)"]
-    )
-)
 
 
 url_dict = {
@@ -348,6 +330,28 @@ market_df = pd.DataFrame({
     "Price (Today)": [crude_2025, natgas_2025, snp_2025],
     "% Change (vs 2024)": [crude_pct, natgas_pct, snp_pct]
 })
+
+styled_df = (
+    market_df
+    .style
+    .format({
+        "Price (Today)": "{:.2f}",
+        "% Change (vs 2024)": format_pct
+    })
+
+
+def format_pct(x):
+    arrow = "▲" if x > 0 else "▼" if x < 0 else "■"
+    return f"{arrow} {x*100:.2f}%"
+
+    .applymap(
+        lambda x: "color: green;" if isinstance(x, str) and "▲" in x
+        else "color: red;" if isinstance(x, str) and "▼" in x
+        else "",
+        subset=["% Change (vs 2024)"]
+    )
+)
+
 
 st.subheader("📊 Market Snapshot")
 st.dataframe(styled_df, use_container_width=True, hide_index=True)
