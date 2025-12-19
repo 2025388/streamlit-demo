@@ -326,9 +326,9 @@ natgas_pct = (natgas_2025 - natgas_2024) / natgas_2024
 snp_pct    = (snp_2025    - snp_2024)    / snp_2024
 
 
-UP = "\u25B2"     
-DOWN = "\u25BC"   
-FLAT = "\u25A0"   
+UP = (\u25B2)    
+DOWN = (\u25BC)   
+FLAT = (\u25A0)  
 
 
 def format_pct(x):
