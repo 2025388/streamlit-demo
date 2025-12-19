@@ -238,6 +238,7 @@ else:
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Poland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
 
+
     
 
     
