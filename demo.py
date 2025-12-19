@@ -222,8 +222,8 @@ if country == 'Ireland':
     st.caption(f'Loading sensibility analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Ireland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
-    s1_map = dict(zip(Si['names'], Si['S1']))  # Si['names'] should have feature names
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
+    s1_map = dict(zip(Si_dict['names'], Si.S1)) if hasattr(Si, 'S1') else dict(zip(features_list, Si.S1))
     table_rows = []
     for feature in features_list:
         s1_val = s1_map.get(feature, 0)
@@ -239,13 +239,14 @@ if country == 'Ireland':
     sensitivity_df = pd.DataFrame(table_rows)
     st.subheader(f"Sensitivity Analysis for {country}")
     st.dataframe(sensitivity_df, use_container_width=True)
+
 elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
     st.caption(f'Loading sensibility analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Belgium', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024, oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
-    s1_map = dict(zip(Si['names'], Si['S1']))  # Si['names'] should have feature names
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
+    s1_map = dict(zip(Si_dict['names'], Si.S1)) if hasattr(Si, 'S1') else dict(zip(features_list, Si.S1))
     table_rows = []
     for feature in features_list:
         s1_val = s1_map.get(feature, 0)
@@ -268,8 +269,8 @@ elif country == 'Norway':
     st.caption(f'Loading sensibility analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Norway', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                               oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
-    s1_map = dict(zip(Si['names'], Si['S1']))  # Si['names'] should have feature names
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
+    s1_map = dict(zip(Si_dict['names'], Si.S1)) if hasattr(Si, 'S1') else dict(zip(features_list, Si.S1))
     table_rows = []
     for feature in features_list:
         s1_val = s1_map.get(feature, 0)
@@ -295,6 +296,9 @@ else:
     s1_map = dict(zip(Si['names'], Si['S1']))  # Si['names'] should have feature names
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
     table_rows = []
+    features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
+    s1_map = dict(zip(Si_dict['names'], Si.S1)) if hasattr(Si, 'S1') else dict(zip(features_list, Si.S1))
+    table_rows = []
     for feature in features_list:
         s1_val = s1_map.get(feature, 0)
         if s1_val >= 0.7:
@@ -309,7 +313,6 @@ else:
     sensitivity_df = pd.DataFrame(table_rows)
     st.subheader(f"Sensitivity Analysis for {country}")
     st.dataframe(sensitivity_df, use_container_width=True)
-
 
     
 
