@@ -75,10 +75,10 @@ def forecast_models(df_model, target_col='Total final consumption (PJ)', split_y
         predictions_dict[name] = df_pred
         if plot:
             fig, ax = plt.subplots(figsize=(10, 4))
-            ax.plot(df_pred['Year'], df_pred['Train Prediction'], marker='o', label='Train Prediction')
-            ax.plot(df_pred['Year'], df_pred['Test Prediction'], marker='o', label='Test Prediction')
+            ax.plot(df_pred['Year'], df_pred['Train Prediction'], label='Train Prediction')
+            ax.plot(df_pred['Year'], df_pred['Test Prediction'], color= 'lightblue' label='Test Prediction')
             if len(y_future_pred) > 0:
-                ax.plot(df_pred['Year'], df_pred['Future Prediction'], marker='o', label='Future Prediction')
+                ax.plot(df_pred['Year'], df_pred['Future Prediction'],  linestyle='--', color='black' label='Future Prediction')
             ax.plot(df_model['Year'], y, linestyle='--', color='k', alpha=0.6, label='Actual')
             ax.set_title(f'{name} Predictions vs Actual')
             ax.set_xlabel('Year')
@@ -209,6 +209,7 @@ market_df = pd.DataFrame({'Asset': ['Brent Oil', 'Natural Gas', 'S&P Index'], 'P
 timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
 st.subheader('Market Snapshot')
 st.caption(f'Updated at {timestamp} - Refresh app to get lastest quotes')
+st.caption(f'Source: Yahoo Finance')
 st.dataframe(market_df, use_container_width=True, hide_index=True)
 
 country = st.selectbox('Select a country', list(url_dict.keys()))
@@ -219,7 +220,7 @@ gdp_2024 = gdp_dict[country]
 if country == 'Ireland':
     predictions, trained_models = forecast_models(df, models_to_run='Random Forest', future_years=list(range(2024,2031)))
     model = trained_models['Random Forest']
-    st.caption(f'Loading sensibility analysis might take up to 4 minutes')
+    st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Ireland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
@@ -248,7 +249,7 @@ if country == 'Ireland':
 elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
-    st.caption(f'Loading sensibility analysis might take up to 4 minutes')
+    st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Belgium', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024, oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
     if isinstance(Si, dict):
@@ -276,7 +277,7 @@ elif country == 'Belgium':
 elif country == 'Norway':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
-    st.caption(f'Loading sensibility analysis might take up to 4 minutes')
+    st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Norway', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                               oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
@@ -304,7 +305,7 @@ elif country == 'Norway':
 else:
     predictions, trained_models = forecast_models(df, models_to_run='Lasso', future_years=list(range(2024,2031)))
     model = trained_models['Lasso']
-    st.caption(f'Loading sensibility analysis might take up to 4 minutes')
+    st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Poland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
