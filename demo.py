@@ -307,9 +307,6 @@ else:
     st.caption(f'Loading sensibility analysis might take up to 4 minutes')
     Si = run_sensitivity_analysis(model,  df_model=df,  country='Poland', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
                                   oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
-    s1_map = dict(zip(Si['names'], Si['S1']))  # Si['names'] should have feature names
-    features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
-    table_rows = []
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
     if isinstance(Si, dict):
         s1_values = Si.get('S1', [0]*len(features_list))
