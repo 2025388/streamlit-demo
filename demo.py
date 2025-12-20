@@ -76,7 +76,7 @@ def forecast_models(df_model, target_col='Total final consumption (PJ)', split_y
         if plot:
             fig, ax = plt.subplots(figsize=(10, 4))
             ax.plot(df_pred['Year'], df_pred['Train Prediction'], label='Train Prediction')
-            ax.plot(df_pred['Year'], df_pred['Test Prediction'], color= 'lightblue', label='Test Prediction')
+            ax.plot(df_pred['Year'], df_pred['Test Prediction'], color= 'darkblue', label='Test Prediction')
             if len(y_future_pred) > 0:
                 ax.plot(df_pred['Year'], df_pred['Future Prediction'],  linestyle='--', color='black', label='Future Prediction')
             ax.plot(df_model['Year'], y, linestyle='--', color='k', alpha=0.6, label='Actual')
