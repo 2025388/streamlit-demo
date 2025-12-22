@@ -250,7 +250,8 @@ elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
     st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
-    Si = run_sensitivity_analysis(model,  df_model=df,  country='Belgium', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024, oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
+    Si = run_sensitivity_analysis(model,  df_model=df,  country='Norway', gdp_2024=gdp_2024, crude_2024=crude_2024, crude_2025=crude_2025, oil_2024=oil_2024,
+                              oil_2025= 253.59, natgas_2024=natgas_2024, natgas_2025=natgas_2025, snp_2024=snp_2024, snp_2025=snp_2025, n_samples=500)
     features_list = ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']
     if isinstance(Si, dict):
         s1_values = Si.get('S1', [0]*len(features_list))
@@ -272,7 +273,6 @@ elif country == 'Belgium':
     sensitivity_df = pd.DataFrame(table_rows)
     st.subheader(f"Sensitivity Analysis for {country}")
     st.dataframe(sensitivity_df, use_container_width=True)
-
 
 elif country == 'Norway':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
