@@ -250,7 +250,7 @@ elif country == 'Belgium':
     predictions, trained_models = forecast_models(df, models_to_run='kNN', future_years=list(range(2024,2031)))
     model = trained_models['kNN']
     st.caption(f'Loading Sensitivity analysis might take up to 4 minutes')
-    Y = np.array(Y)
+    Y = np.array(y)
 
     st.write("Y stats:", {
     "len": len(Y),
