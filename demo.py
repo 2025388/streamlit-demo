@@ -91,7 +91,7 @@ def forecast_models(df_model, target_col='Total final consumption (PJ)', split_y
 
 def run_sensitivity_analysis(model, df_model, country, gdp_2024=None, crude_2024=None, crude_2025=None, oil_2024=None, oil_2025=None, natgas_2024=None, 
                              natgas_2025=None, snp_2024=None, snp_2025=None, n_samples=1000):
-    features = [f for f in df_model.columns if f in ['GDP', 'G_oil_products', 'G_crude', 'G_natgas', 'G_S&P']]
+    features = df_model.drop(columns=['Year', 'Country', 'Total final consumption (PJ)'], errors='ignore').columns.tolist()
     problem_features = []
     bounds = []
     base_values = []
